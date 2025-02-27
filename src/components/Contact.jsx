@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { sendEmail } from "../utils/sendEmail"; // Import sendEmail function
 import { CONTACT } from "../constants";
 import { motion } from "framer-motion";
 import { FaPhone, FaEnvelope, FaCommentDots, FaDownload } from "react-icons/fa";
@@ -26,8 +25,22 @@ const Contact = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await sendEmail(senderEmail, message);
-        setStatus(response);
+        const formData = new FormData();
+        formData.append("email", senderEmail);
+        formData.append("message", message);
+
+        const response = await fetch("https://formsubmit.co/bhattacharjeesubhadeep0@gmail.com", {
+            method: "POST",
+            body: formData,
+        });
+
+        if (response.ok) {
+            setStatus({ success: true, message: "Email sent successfully!" });
+            setSenderEmail("");
+            setMessage("");
+        } else {
+            setStatus({ success: false, message: "Failed to send email" });
+        }
     };
 
     return (
